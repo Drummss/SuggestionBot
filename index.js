@@ -40,6 +40,8 @@ addCommands('./src/commands', client.commands)
 
 client.once('ready', () => {
     console.log('Suggestion Bot has successfully started.'.blue);
+
+    client.user.setActivity("your awesome ideas!", { type: "WATCHING" })
 });
 
 /*
