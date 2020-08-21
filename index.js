@@ -1,4 +1,6 @@
 const Discord = require('discord.js');
+const colors = require('colors');
+const fs = require('fs');
 const { prefix, token } = require('./config/settings.json');
 const { Watch } = require('./src/databaseObjects');
 
@@ -6,21 +8,38 @@ const client = new Discord.Client();
 client.prefix = prefix;
 client.commands = new Discord.Collection();
 
-const newCommand = function(commandName) {
-    const command = require(`./src/commands/${commandName}.js`);
-    client.commands.set(command.name, command);
-}
+/*
+    Recursively add commands.
+*/
+const addCommands = function(dirPath, commandList) {
+    fs.readdirSync(dirPath).forEach(function (file) {
+        if (fs.statSync(`${dirPath}/${file}`).isDirectory()) {
+            addCommands(`${dirPath}/${file}`, commandList);
+        } else {
+            const command = require(`${dirPath}/${file}`);
+            commandList.set(command.name, command);
+            try {
+                command.alias.forEach(function (alias) {
+                    commandList.set(alias, command);
+                });
+            }
+            catch (error) {
+
+            }
+        }
+    });
+
+    console.log(`Commands loaded from '${dirPath}' (${commandList.map(x => x.name).join(', ')}).`);
+};
 
 /*
     Setup commands.
-    TODO: Make this automatic.
     TODO: Add modules.
 */
-newCommand('watch');
-newCommand('stop');
+addCommands('./src/commands', client.commands)
 
 client.once('ready', () => {
-    console.log('Suggestion Bot has successfully started.');
+    console.log('Suggestion Bot has successfully started.'.blue);
 });
 
 /*
@@ -54,18 +73,18 @@ client.on('message', (message) => {
     }
     
     const args = message.content.slice(client.prefix.length).split(/\s+/);
-	const commandName = args.shift().toLowerCase();
+    const commandName = args.shift().toLowerCase();
     if (!client.commands.has(commandName)) return;
 
     const command = client.commands.get(commandName);
-	try {
-		command.execute(client, message, args);
-	}
-	catch(error) { 
-		console.log(error);
-		message.channel.send('There was an error executing that command.');
-		return;
-	}
+    try {
+        command.execute(client, message, args);
+    }
+    catch(error) { 
+        console.log(error);
+        message.channel.send('There was an error executing that command.');
+        return;
+    }
 });
 
 client.login(token);

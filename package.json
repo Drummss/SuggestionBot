@@ -1,10 +1,11 @@
 {
   "name": "suggestionbot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A Discord bot for adding reactions to messages in a suggestions channel.",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "start-watch": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -16,10 +17,13 @@
   "author": "Drumsy",
   "license": "ISC",
   "dependencies": {
+    "colors": "^1.4.0",
     "discord.js": "^12.3.1",
-    "dotenv": "^8.2.0",
     "eslint": "^7.7.0",
     "sequelize": "^6.3.4",
     "sqlite3": "^5.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
   }
 }

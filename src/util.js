@@ -9,5 +9,8 @@ module.exports = {
         }
 
         return mention;
+    },
+    capitalizeString(text) {
+        return text[0].toUpperCase() + text.substr(1);
     }
 }

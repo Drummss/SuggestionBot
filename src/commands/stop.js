@@ -4,6 +4,8 @@ const { Watch } = require('../databaseObjects');
 
 module.exports = {
     name: 'stop',
+    usage: '',
+    description: `Removes a channel from being reacted to.`,
     async execute (client, message, args) {
         const channelId = Util.getChannelIdFromMention(args.shift()) || message.channel.id
         const channel = client.channels.cache.get(channelId);
@@ -18,6 +20,10 @@ module.exports = {
                 channel_id: channel.id,
             }
         });
+        
+        const stopEmbed = new Discord.MessageEmbed()
+            .setColor('#4444ff')
+            .setTitle('Suggestion Bot');
 
         if(checkWatch > 0) {
             Watch.destroy({
@@ -26,9 +32,11 @@ module.exports = {
                     channel_id: channel.id,
                 }
             });
-            message.channel.send(`I'm no longer reacting to <#${channel.id}>!`);
+            stopEmbed.setDescription(`I'm no longer reacting to <#${channel.id}>!`);
         } else {
-            message.channel.send(`I haven't been watching <#${channel.id}>.`);
+            stopEmbed.setDescription(`I haven't been watching <#${channel.id}>.`);
         }
+
+        message.channel.send(stopEmbed);
     }
 }

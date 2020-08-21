@@ -4,6 +4,8 @@ const { Watch } = require('../databaseObjects');
 
 module.exports = {
     name: 'watch',
+    usage: '[channel]',
+    description: 'Add a channel that I should react to.',
     async execute (client, message, args) {
         const channelId = Util.getChannelIdFromMention(args.shift()) || message.channel.id
         const channel = client.channels.cache.get(channelId);
@@ -18,12 +20,18 @@ module.exports = {
                 channel_id: channel.id,
             }
         });
+        
+        const watchEmbed = new Discord.MessageEmbed()
+            .setColor('#4444ff')
+            .setTitle('Suggestion Bot');
 
         if(checkWatch == 0) {
             Watch.upsert({guild_id: message.guild.id, channel_id: channel.id});
-            message.channel.send(`I'm now reacting to <#${channel.id}>!`);
+            watchEmbed.setDescription(`I'm now reacting to <#${channel.id}>!`);
         } else {
-            message.channel.send(`I'm already watching <#${channel.id}>.`);
+            watchEmbed.setDescription(`I'm already watching <#${channel.id}>.`);
         }
+
+        message.channel.send(watchEmbed);
     }
 }
