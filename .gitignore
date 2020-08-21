@@ -1,3 +1,7 @@
+# SuggestionBot specifics.
+config/settings.json
+suggestionbot.sqlite
+
 # Logs
 logs
 *.log
