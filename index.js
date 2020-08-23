@@ -66,6 +66,8 @@ client.once('ready', () => {
     registerGuilds();
 
     console.log('[SuggestionBot]'.green, `Connected to ${client.guilds.cache.size} server${client.guilds.cache.size > 1 ? 's':''}.`);
+
+    client.user.setActivity("your awesome ideas!", { type: "WATCHING" })
 });
 
 /*

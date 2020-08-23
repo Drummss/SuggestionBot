@@ -11,7 +11,7 @@ module.exports = {
         const channel = client.channels.cache.get(channelId);
 
         if(!channel) {
-            message.channel.send(`I can't find that channel.`);
+            return message.channel.send(`I can't find that channel.`);
         }
 
         const checkWatch = await Watch.count({
