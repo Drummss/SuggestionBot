@@ -1,11 +1,12 @@
 {
   "name": "suggestionbot",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A Discord bot for adding reactions to messages in a suggestions channel.",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "start-watch": "nodemon index.js",
+    "init-db": "node ./src/databaseInit.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [

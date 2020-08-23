@@ -7,6 +7,7 @@ const sequelize = new Sequelize('suggestionbot', 'root', '', {
 	storage: 'suggestionbot.sqlite',
 });
 
+const Guild = require('./models/Guild')(sequelize, Sequelize.DataTypes);
 const Watch = require('./models/Watch')(sequelize, Sequelize.DataTypes);
 
 sequelize.sync();

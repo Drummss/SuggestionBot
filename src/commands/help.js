@@ -20,6 +20,8 @@ module.exports = {
             );
         });
 
+        if(client.commands.size % 3 === 2) embed.addField('\u200b', '\u200b', true);
+
         message.channel.send(embed);
     }
 }

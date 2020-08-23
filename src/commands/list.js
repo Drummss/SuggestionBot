@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const Util = require('../util');
-const { Watch } = require('../databaseObjects');
+const { Watch } = require('../dbContext');
 
 module.exports = {
     name: 'list',

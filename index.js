@@ -2,14 +2,14 @@ const Discord = require('discord.js');
 const colors = require('colors');
 const fs = require('fs');
 const { prefix, token } = require('./config/settings.json');
-const { Watch } = require('./src/databaseObjects');
+const { Guild, Watch } = require('./src/dbContext');
 
 const client = new Discord.Client();
 client.prefix = prefix;
 client.commands = new Discord.Collection();
 
 /*
-    Recursively add commands.
+    Recursively adds commands.
 */
 const addCommands = function(dirPath, commandList) {
     fs.readdirSync(dirPath).forEach(function (file) {
@@ -38,8 +38,42 @@ const addCommands = function(dirPath, commandList) {
 */
 addCommands('./src/commands', client.commands)
 
+/* 
+    Register Guilds 
+*/
+const registerGuilds = function() {
+    let newGuilds = 0;
+
+   client.guilds.cache.each(async guild => {
+       const checkGuild = await Guild.findOne({
+           where: {
+               guild_id: guild.id
+           }
+       });
+
+       if(!checkGuild) {
+           await Guild.upsert({guild_id: guild.id});
+           newGuilds++;
+       }
+   });
+
+   console.log('[SuggestionBot]'.green, `${newGuilds} new guilds registered.`);
+}
+
 client.once('ready', () => {
-    console.log('Suggestion Bot has successfully started.'.blue);
+    console.log('[SuggestionBot]'.green, 'Successfully started.');
+
+    registerGuilds();
+
+    console.log('[SuggestionBot]'.green, `Connected to ${client.guilds.cache.size} server${client.guilds.cache.size > 1 ? 's':''}.`);
+});
+
+/*
+    Register new guilds when created.
+*/
+client.on('guildCreate', async guild => {
+    await Guild.upsert({guild_id: guild.id});
+    console.log('[SuggestionBot]'.green, `New guild registered.`);
 });
 
 /*
@@ -55,6 +89,15 @@ client.on('message', async message => {
             channel_id: message.channel.id
         }
     }) == null) return;
+
+    const requiresMention = await Guild.count({
+        where: {
+            guild_id: message.guild.id,
+            require_mention: true
+        }
+    });
+
+    if(requiresMention && !message.mentions.has(client.user)) return;
 
     await message.react('746110774090661960'); // Checkmark
     await message.react('746110773872296077'); // Cross
