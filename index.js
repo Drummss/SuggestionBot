@@ -76,12 +76,27 @@ client.on('guildCreate', async guild => {
     console.log('[SuggestionBot]'.green, `New guild registered.`);
 });
 
+const getPrefix = async function(message) {
+    const guild = await Guild.findOne({
+        where: {
+            guild_id: message.guild.id
+        }
+    });
+    
+    if(message.content.startsWith(client.prefix)) 
+        return client.prefix;
+    else if((guild.prefix != 0 || guild.prefix != null) && message.content.startsWith(guild.prefix))
+        return guild.prefix;
+
+    return undefined;
+}
+
 /*
     Add reaction to messages.
 */
 client.on('message', async message => {
-    if(message.content.startsWith(prefix) || message.author.bot) return;
-    if(message.channel.type == 'dm') return;
+    if(message.channel.type == 'dm' || message.author.bot) return;
+    if(await getPrefix(message)) return;
 
     if(await Watch.findOne({
         where: {
@@ -106,16 +121,18 @@ client.on('message', async message => {
 /*
     Listen for commands.
 */
-client.on('message', (message) => {
-    if(!message.content.startsWith(prefix) || message.author.bot) return;
-    if(message.channel.type == 'dm') return;
+client.on('message', async (message) => {
+    if(message.channel.type == 'dm' || message.author.bot) return;
+
+    const prefixUsed = await getPrefix(message);
+    if(!prefixUsed) return;
     
     if(!message.member.hasPermission(['MANAGE_CHANNELS'])) {
         message.reply('you need `Manage Channel` permissions to use this bot.');
         return;
     }
     
-    const args = message.content.slice(client.prefix.length).split(/\s+/);
+    const args = message.content.slice(prefixUsed.length).split(/\s+/);
     const commandName = args.shift().toLowerCase();
     if (!client.commands.has(commandName)) return;
 
