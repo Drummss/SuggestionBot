@@ -41,23 +41,27 @@ addCommands('./src/commands', client.commands)
 /* 
     Register Guilds 
 */
-const registerGuilds = function() {
+const registerGuilds = async function() {
+    const connectedGuilds = client.guilds.cache.array();
     let newGuilds = 0;
 
-   client.guilds.cache.each(async guild => {
-       const checkGuild = await Guild.findOne({
-           where: {
-               guild_id: guild.id
-           }
-       });
+    for (let i = 0; i < connectedGuilds.length; i++) {
+        const guild = connectedGuilds[i];
+        const checkGuild = await Guild.findOne({
+            where: {
+                guild_id: guild.id
+            }
+        });
 
-       if(!checkGuild) {
-           await Guild.upsert({guild_id: guild.id});
-           newGuilds++;
-       }
-   });
+        if(!checkGuild) {
+            await Guild.upsert({guild_id: guild.id});
 
-   console.log('[SuggestionBot]'.green, `${newGuilds} new guilds registered.`);
+            console.log(`Adding guild ${guild.name}`.red)
+            newGuilds += 1;
+        }
+    }
+
+    if(newGuilds > 0) console.log('[SuggestionBot]'.green, `${newGuilds} new guild${newGuilds == 1 ? 's':''} registered.`);
 }
 
 client.once('ready', () => {
