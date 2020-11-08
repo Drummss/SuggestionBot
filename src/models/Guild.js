@@ -7,7 +7,6 @@ module.exports = (sequelize, DataTypes) => {
         },
         prefix: {
             type: DataTypes.STRING,
-            defaultValue: false,
             allowNull: true
         },
         require_mention: {

@@ -55,8 +55,6 @@ const registerGuilds = async function() {
 
         if(!checkGuild) {
             await Guild.upsert({guild_id: guild.id});
-
-            console.log(`Adding guild ${guild.name}`.red)
             newGuilds += 1;
         }
     }
@@ -71,7 +69,7 @@ client.once('ready', () => {
 
     console.log('[SuggestionBot]'.green, `Connected to ${client.guilds.cache.size} server${client.guilds.cache.size > 1 ? 's':''}.`);
 
-    client.user.setActivity("your awesome ideas!", { type: "WATCHING" })
+    client.user.setActivity('your awesome ideas!', { type: "WATCHING" })
 });
 
 /*
@@ -88,13 +86,13 @@ const getPrefix = async function(message) {
             guild_id: message.guild.id
         }
     });
-    
+
     if(message.content.startsWith(client.prefix)) 
         return client.prefix;
-    else if((guild.prefix != 0 || guild.prefix != null) && message.content.startsWith(guild.prefix))
+    else if((guild.prefix != 0 && guild.prefix != null) && message.content.startsWith(guild.prefix))
         return guild.prefix;
 
-    return undefined;
+    return null;
 }
 
 /*
@@ -102,6 +100,7 @@ const getPrefix = async function(message) {
 */
 client.on('message', async message => {
     if(message.channel.type == 'dm' || message.author.bot) return;
+    if(message.content.startsWith("> ") || message.content.startsWith(">>> ")) return;
     if(await getPrefix(message)) return;
 
     if(await Watch.findOne({
