@@ -1,12 +1,22 @@
+require('dotenv').config();
+
 const Discord = require('discord.js');
 const colors = require('colors');
 const fs = require('fs');
-const { prefix, token } = require('./config/settings.json');
 const { Guild, Watch } = require('./src/dbContext');
 
 const client = new Discord.Client();
-client.prefix = prefix;
+client.prefix = process.env.PREFIX ?? 'sb.';
 client.commands = new Discord.Collection();
+
+/*
+    Features
+    TODO: Allow server owners to toggle between user messages being reacted to and the 
+
+    Database
+    TODO: Add database migrations.
+    TODO: Add support for non-sqlite configuration.
+*/
 
 /*
     Recursively adds commands.
@@ -151,5 +161,12 @@ client.on('message', async (message) => {
         return;
     }
 });
+
+const token = process.env.TOKEN;
+
+if(!token) {
+    console.error('error:'.red, 'A token must be defined in the environment');
+    process.exit(1);
+}
 
 client.login(token);

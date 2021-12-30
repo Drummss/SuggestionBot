@@ -1,7 +1,11 @@
 version: '3'
 services:
-  node:
+  suggestionbot:
+    container_name: suggestionbot
+    restart: always
     build: .
     environment:
       - NODE_ENV=production
-    command: npm start
+      - TOKEN=<token>
+    volumes:
+      - ./suggestionbot.sqlite:/usr/app/suggestionbot.sqlite
